@@ -1,0 +1,19 @@
+	/*----- constants -----*/
+the board
+
+
+	/*----- state variables -----*/
+the cards
+the icons
+
+	/*----- cached elements  -----*/
+timer
+
+	/*----- event listeners -----*/
+the play again button
+dificulty button
+
+	/*----- functions -----*/
+    initiialize 
+    randomize where the icons are on the board
+    reset timer
