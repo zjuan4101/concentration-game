@@ -36,9 +36,9 @@ background-color: salmon;
     position: relative;
   }
 
-  .hidden {
+  /* .hidden {
     display: none;
-  }
+  } */
 
   img {
     max-width: 100%;
