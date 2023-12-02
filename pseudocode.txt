@@ -15,5 +15,7 @@ dificulty button
 
 	/*----- functions -----*/
     initiialize 
+	render
     randomize where the icons are on the board
     reset timer
+	timer function
