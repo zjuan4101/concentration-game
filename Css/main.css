@@ -18,10 +18,10 @@ background-color: salmon;
     gap: 2vmin;
   }
 
-  #board > div {
+  /* #board > div {
     border: 0.5vmin solid blue;
     background-color: green;
-  }
+  } */
   #play-again {
     margin-top: 2vmin;
     padding: 2vmin;
@@ -32,10 +32,21 @@ background-color: salmon;
     color: ghostwhite;
   }
 
-  .container {
+  .card {
+    background-color: #ccc;
     position: relative;
+    cursor: pointer;
   }
 
+  .card img {
+    max-width: 100%;
+    max-height: 100%;
+    display: none;
+  }
+
+  .flipped img {
+    display: block;
+  }
   /* .hidden {
     display: none;
   } */
