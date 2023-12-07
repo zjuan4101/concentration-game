@@ -21,10 +21,6 @@ font-family: 'Poppins', sans-serif;
     gap: 2vmin;
   }
 
-  /* #board > div {
-    border: 0.5vmin solid blue;
-    background-color: green;
-  } */
   #play-again {
     margin-top: 2vmin;
     padding: 2vmin;
@@ -33,6 +29,8 @@ font-family: 'Poppins', sans-serif;
     border: .5vmin solid #ABD7EB;
     background-color: #3EB489;
     color: ghostwhite;
+    cursor: pointer;
+    display: none;
   }
 
   .card {
@@ -50,10 +48,7 @@ font-family: 'Poppins', sans-serif;
   .flipped img {
     display: block;
   }
-  /* .hidden {
-    display: none;
-  } */
-
+  
   img {
     max-width: 100%;
     height: auto;

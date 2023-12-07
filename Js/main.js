@@ -1,115 +1,158 @@
-	/*----- constants -----*/
-const initialTimerSeconds = 6000
+/*----- Constants -----*/
+const initialTimerSeconds = 60
 const cardFlipDelay = 500
-/*----- state variables -----*/
+
+/*----- State Variables -----*/
 let flippedCards = []
 let matchedPairs = 0
 let timerSeconds = initialTimerSeconds
 let cardElements
-/*----- cached elements -----*/
+
+/*----- Cached Elements -----*/
 const gameBoard = document.getElementById('board')
-const timerDisplay = document.getElementById('timer')
-/*----- event listeners -----*/
-function flipCard() {
-  const card = this
+const gameInfo = document.getElementById('game-info')
+const playAgainBtn = document.getElementById('play-again')
+const messageElement = document.getElementById('message')
+const timerElement = document.getElementById('timer')
 
-  // Avoid flipping more than two cards at a time or clicking on already matched cards
-  if (flippedCards.length < 2 && !flippedCards.includes(card)) {
-    // Show the image
-    card.classList.add('flipped')
-    flippedCards.push(card)
+/*----- Event Listeners -----*/
+playAgainBtn.addEventListener('click', resetGame)
+gameBoard.addEventListener('click', handleCardClick)
 
-    if (flippedCards.length === 2) {
-      setTimeout(checkMatch, cardFlipDelay); // Delay to show the second card before checking for a match
-    }
+/*----- Functions -----*/
+// Initializes the memory card game by setting up event listeners and calling the resetGame function
+function initializeGame() {
+  cardElements = Array.from(gameBoard.querySelectorAll('.card'))
+  resetGame()
+}
+
+// Handles the click event on a card. It flips the card and checks for matches
+function handleCardClick(event) {
+  const card = event.target.closest('.card')
+
+  if (!card || flippedCards.length === 2 || flippedCards.includes(card) || matchedPairs === cardElements.length / 2) {
+    return
+  }
+
+  flipCard(card)
+
+  if (flippedCards.length === 2) {
+    setTimeout(checkMatch, cardFlipDelay)
   }
 }
-/*----- functions -----*/
-function initializeGame() {
-  // Convert cards to array and shuffle
-  cardElements = Array.from(gameBoard.querySelectorAll('.card'))
-  shuffleArray(cardElements)
 
-  // Append shuffled cards back to the game board
-  cardElements.forEach(card => {
-    gameBoard.appendChild(card)
-  })
-
-  // Add event listener to each card
-  cardElements.forEach(card => {
-    card.addEventListener('click', flipCard);
-  })
-
-  updateTimerDisplay()
+// Flips the given card by adding the 'flipped' class and adding it to the flippedCards array
+function flipCard(card) {
+  card.classList.add('flipped')
+  flippedCards.push(card)
 }
 
+// Checks if the flipped cards match. If they do, it disables the cards; otherwise, it unflips them
 function checkMatch() {
   const [card1, card2] = flippedCards
 
   if (card1.innerHTML === card2.innerHTML) {
-    // Match found
-    console.log('Match found!')
-    card1.removeEventListener('click', flipCard)
-    card2.removeEventListener('click', flipCard)
+    disableMatchedCards()
     matchedPairs++
 
     if (matchedPairs === cardElements.length / 2) {
-      alert('Congratulations! You won!')
-      resetGame()
+      showGameResult('Congratulations! You won!')
     }
   } else {
-    // No match, hide the images 
-    console.log('no match, hiding images')
-    card1.classList.remove('flipped')
-    card2.classList.remove('flipped')
+    setTimeout(() => {
+      unflipCards(card1, card2)
+    }, cardFlipDelay)
   }
 
   flippedCards = []
 }
 
+// Disables the matched cards by removing the click event listener
+function disableMatchedCards() {
+  flippedCards.forEach(card => {
+    card.removeEventListener('click', handleCardClick)
+  })
+}
+
+// Unflips the given cards by removing the 'flipped' class
+function unflipCards(card1, card2) {
+  card1.classList.remove('flipped')
+  card2.classList.remove('flipped')
+}
+
+// Updates the timer display and checks for game over conditions
 function updateTimerDisplay() {
   const minutes = Math.floor(timerSeconds / 60)
   const seconds = timerSeconds % 60
-  timerDisplay.textContent = `Timer: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+  timerElement.textContent = `Timer: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 
   if (timerSeconds === 0) {
-    alert('Game Over! Time is up.')
-    resetGame()
+    showGameResult('Game Over! Time is up.')
   } else {
     timerSeconds--
-    setTimeout(updateTimerDisplay, 1000) // Update every second
+    setTimeout(updateTimerDisplay, 1000)
   }
 }
 
+// Displays the game result message and handles game over conditions
+function showGameResult(message) {
+  if (message === 'Congratulations! You won!' || message === 'Game Over! Time is up.') {
+    hideTimer()
+    hideGameBoard()
+  } else {
+    showTimer()
+  }
+
+  messageElement.textContent = message
+  playAgainBtn.style.display = 'block'
+}
+
+// Hides the timer element
+function hideTimer() {
+  timerElement.style.display = 'none'
+}
+
+// Displays the timer element
+function showTimer() {
+  timerElement.style.display = 'block'
+}
+
+// Hides the game board element
+function hideGameBoard() {
+  gameBoard.style.display = 'none'
+}
+
+// Resets the game state, shuffles the cards, and sets up the initial game display
 function resetGame() {
-  // Reset game state
+  gameBoard.style.display = 'grid'
+  playAgainBtn.style.display = 'none'
+  messageElement.textContent = ''
+  messageElement.style.display = 'block'
   flippedCards = []
   matchedPairs = 0
   timerSeconds = initialTimerSeconds
+  showTimer()
   updateTimerDisplay()
 
-  // Reset card state and shuffle
   cardElements.forEach(card => {
     card.classList.remove('flipped')
-    gameBoard.appendChild(card)
-  })
-  shuffleArray(cardElements)
-  cardElements.forEach(card => {
-    gameBoard.appendChild(card)
+    card.addEventListener('click', handleCardClick)
   })
 
-  // Add event listener to each card
+  shuffleArray(cardElements)
+
   cardElements.forEach(card => {
-    card.addEventListener('click', flipCard)
+    gameBoard.appendChild(card)
   })
 }
 
-// Fisher-Yates shuffle algorithm
+// Shuffles the given array using the Fisher-Yates algorithm
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
+
 // Call the initialize function
 initializeGame()
