@@ -14,6 +14,7 @@ const gameInfo = document.getElementById('game-info')
 const playAgainBtn = document.getElementById('play-again')
 const messageElement = document.getElementById('message')
 const timerElement = document.getElementById('timer')
+const instructionsElement = document.getElementById('instructions')
 
 /*----- Event Listeners -----*/
 playAgainBtn.addEventListener('click', resetGame)
@@ -28,6 +29,9 @@ function initializeGame() {
 
 // Handles the click event on a card. It flips the card and checks for matches
 function handleCardClick(event) {
+  // Hide instructions when the first card is clicked
+  instructionsElement.style.display = 'none'
+
   const card = event.target.closest('.card')
 
   if (!card || flippedCards.length === 2 || flippedCards.includes(card) || matchedPairs === cardElements.length / 2) {
@@ -88,12 +92,15 @@ function updateTimerDisplay() {
 
   if (timerSeconds === 0) {
     showGameResult('Game Over! Time is up.')
+    instructionsElement.style.display = 'none'
+  } else if(matchedPairs === cardElements.length / 2) { 
+    timerSeconds = 60
+    return
   } else {
     timerSeconds--
     setTimeout(updateTimerDisplay, 1000)
   }
 }
-
 // Displays the game result message and handles game over conditions
 function showGameResult(message) {
   if (message === 'Congratulations! You won!' || message === 'Game Over! Time is up.') {
@@ -144,6 +151,9 @@ function resetGame() {
   cardElements.forEach(card => {
     gameBoard.appendChild(card)
   })
+
+  // Show instructions when the game is reset
+  instructionsElement.style.display = 'block'
 }
 
 // Shuffles the given array using the Fisher-Yates algorithm
